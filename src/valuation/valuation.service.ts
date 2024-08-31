@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -21,30 +21,41 @@ export class ValuationService {
   async getVehicleValuation(vehicleId: number): Promise<Valuation> {
     const vehicle = await this.vehicleRepository.findOne({ where : { id: vehicleId } });
     if (!vehicle) {
-      throw new Error('Vehicle not found');
+      throw new HttpException('Vehicle not found', HttpStatus.BAD_GATEWAY);
     }
+
+    console.log("vehicle:",vehicle);
 
     // Make API call to get valuation
     const vin = vehicle.vin;
     const url = `https://vin-lookup2.p.rapidapi.com/vehicle-lookup?vin=${vin}`;
     const headers = {
       'x-rapidapi-host': 'vin-lookup2.p.rapidapi.com',
-      'x-rapidapi-key': this.configService.get<string>('RAPID_API_KEY'), // Replace with your actual API key
+      'x-rapidapi-key': this.configService.get<string>('RAPID_API_KEY'),
     };
 
-    const response = await this.httpService
-      .get(url, { headers })
-      .toPromise();
+    try {
+      const response = await this.httpService
+        .get(url, { headers })
+        .toPromise();
 
-    const { loan_value } = response.data;
+      const { loan_value } = response.data;
 
-    // Create and save the valuation
-    const valuation = this.valuationRepository.create({
-      vehicle,
-      estimatedValue: loan_value,
-      valuationDate: new Date(),
-    });
+      if(!loan_value){
+        throw new HttpException('Invalid request. Check the VIN and retry.', HttpStatus.NOT_ACCEPTABLE);
+      }
 
-    return this.valuationRepository.save(valuation);
+      // Create and save the valuation
+      const valuation = this.valuationRepository.create({
+        vehicle,
+        estimatedValue: loan_value,
+        valuationDate: new Date(),
+      });
+
+      return this.valuationRepository.save(valuation);
+    } catch (error) {
+      throw new HttpException('Failed to retrieve vehicle valuation', HttpStatus.BAD_GATEWAY);
+    }
+
   }
 }
