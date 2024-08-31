@@ -1,9 +1,6 @@
-Certainly! Here's a well-structured `README.md` file for your project:
 
-```markdown
-<p align="center">
-  <h1>Autochek's Backend API (A Test)</h1>
-</p>
+
+# Autochek's Backend API (An Assessment)
 
 ## Description
 
@@ -85,9 +82,4 @@ Here, `<port>` refers to the port number you've set in your `.env` file.
 - `POST /loans` - Apply for a loan.
 - `PATCH /loans/:id/status` - Update the status of a loan application.
 
-## Additional Notes
-
-- **Authentication**: Most routes require a valid JWT token. Make sure to include it in your requests.
-- **Swagger**: The API documentation is fully interactive, allowing you to test endpoints directly from your browser.
-- **Database**: The project uses TypeORM for database management. Ensure your database configuration in the `.env` file is correct.
 
