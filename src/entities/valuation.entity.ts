@@ -15,5 +15,4 @@ export class Valuation {
     @Column()
     valuationDate: Date;
 
-
 }

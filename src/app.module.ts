@@ -11,6 +11,7 @@ import { Valuation } from './entities/valuation.entity';
 import { VehicleModule } from './vehicle/vehicle.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { ValuationModule } from './valuation/valuation.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { AuthModule } from './auth/auth.module';
     VehicleModule,
     UserModule,
     AuthModule,
+    ValuationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
