@@ -13,9 +13,17 @@ export class AuthService {
     private readonly accessTokenService: AccessTokenService,
   ) {}
 
+//   async validateUser(username: string, pass: string): Promise<User | null> {
+//     const user = await this.userService.findOne(username);
+//     if (user && pass === 'password') { // Simplified validation
+//       return user;
+//     }
+//     return null;
+//   }
+
   async validateUser(username: string, pass: string): Promise<User | null> {
     const user = await this.userService.findOne(username);
-    if (user && pass === 'password') { // Simplified validation
+    if (user && await this.userService.validatePassword(pass, user.password)) {
       return user;
     }
     return null;
@@ -24,6 +32,9 @@ export class AuthService {
   async login(user: User) {
     console.log("user,", user);
     const getUser =  await this.userService.findOne(user.username);
+    if (!getUser) {
+        throw new Error('User not found');
+      }
     console.log("user 2,", getUser);
     const payload = { username: user.username, sub: user.id };
     const token = this.jwtService.sign(payload);

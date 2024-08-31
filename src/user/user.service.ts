@@ -31,28 +31,8 @@ export class UserService {
         return this.userRepository.save(user);
     }
 
-    // async findOne(username: string): Promise<User | undefined> {
-    //     return this.userRepository.findOne({ where: { username: username } });
-    // }
-
-    // async findOne(username: string): Promise<User | undefined> {
-    //     console.log("user at findOne", username);
-    //     return this.userRepository.createQueryBuilder('user')
-    //       .where('user.username = :username', { username })
-    //       .getOne();
-    //   }
-
-    // src/user/user.service.ts
     async findOne(username: string): Promise<User | undefined> {
-        console.log("user at findOne", username);
-    
-        const queryBuilder = this.userRepository.createQueryBuilder('user')
-        .where('user.username = :username', { username });
-    
-        // Log the actual SQL query
-        console.log('SQL Query:', queryBuilder.getSql());
-    
-        return queryBuilder.getOne();
+        return this.userRepository.findOne({ where: { username: username } });
     }
 
     async validatePassword(password: string, hashedPassword: string): Promise<boolean> {
