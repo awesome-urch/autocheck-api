@@ -12,6 +12,7 @@ import { VehicleModule } from './vehicle/vehicle.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ValuationModule } from './valuation/valuation.module';
+import { LoanApplicationModule } from './loan-application/loan-application.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ValuationModule } from './valuation/valuation.module';
     UserModule,
     AuthModule,
     ValuationModule,
+    LoanApplicationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
