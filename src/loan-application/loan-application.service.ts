@@ -1,4 +1,3 @@
-// loan-application.service.ts
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
@@ -26,6 +25,10 @@ export class LoanApplicationService {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
+    if (!loanAmount) {
+        throw new HttpException('loanAmount not set', HttpStatus.BAD_REQUEST);
+      }
+
     // Check if user has a vehicle
     const vehicles = await this.vehicleRepository.find({ where: { user } });
     if (vehicles.length === 0) {
@@ -43,15 +46,40 @@ export class LoanApplicationService {
   }
 
   async updateLoanStatus(loanId: number, status: 'approved' | 'disapproved'): Promise<LoanApplication> {
-    const loanApplication = await this.loanApplicationRepository.findOne({ where: { id: loanId } });
+    const loanApplication = await this.loanApplicationRepository.findOne({ where: { id: loanId }, relations: ['user'], });
     if (!loanApplication) {
       throw new HttpException('Loan application not found', HttpStatus.NOT_FOUND);
     }
 
+    console.log("loanApplication:", loanApplication);
+
     if (status === 'approved') {
-        const vehicleIds = loanApplication.user.vehicles.map(vehicle => vehicle.id);
-        const valuations = await this.valuationRepository.find({ where: { vehicle: In(vehicleIds) },});
-        const totalEstimatedValue = valuations.reduce((sum, valuation) => sum + Number(valuation.estimatedValue), 0);
+        
+        const userId = loanApplication.user.id;
+        console.log("loanApplication userid:", userId);
+        const user = await this.userRepository.findOne({
+            where: { id: userId },
+            relations: ['vehicles'],
+        });
+
+        console.log("loanApplication user:", user);
+
+        const vehicleIds = user.vehicles.map(vehicle => vehicle.id);
+
+        console.log("loanApplication vehicleIds:", vehicleIds);
+
+        const valuations = await this.valuationRepository.find({
+            where: { vehicle: In(vehicleIds) },
+        });
+
+        console.log("loanApplication valuations:", valuations);
+
+        const totalEstimatedValue = valuations.reduce(
+            (sum, valuation) => sum + Number(valuation.estimatedValue),
+            0,
+        );
+
+        console.log("loanApplication totalEstimatedValue:", totalEstimatedValue);
 
       if (totalEstimatedValue < loanApplication.loanAmount) {
         throw new HttpException('Loan cannot be approved because the total estimated value of vehicles is less than the loan amount', HttpStatus.BAD_REQUEST);
