@@ -18,7 +18,7 @@ This Backend API supports Autochek's vehicle valuation and financing services, a
 ### 1. Clone the Repository
 
 ```bash
-$ git clone https://github.com/your-repo/autochek-backend.git
+$ git clone https://github.com/awesome-urch/autochek-backend.git
 $ cd autochek-backend
 ```
 
@@ -66,7 +66,12 @@ Here, `<port>` refers to the port number you've set in your `.env` file.
 
 ### Authentication
 
+- `POST /user` - Create or Register User .
 - `POST /auth/login` - Log in and receive a JWT token.
+
+#### Protected Endpoints
+
+To access protected endpoints, please add the user generated tokens as `Bearer Tokens` in the authorization headers.
 
 ### Vehicles
 
