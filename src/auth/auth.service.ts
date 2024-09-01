@@ -29,12 +29,10 @@ export class AuthService {
   }
 
   async login(user: User) {
-    console.log("user,", user);
     const getUser =  await this.userService.findOne(user.username);
     if (!getUser) {
         throw new Error('User not found');
       }
-    console.log("user 2,", getUser);
     const payload = { username: user.username, sub: user.id };
     const token = this.jwtService.sign(payload);
     await this.accessTokenService.createToken(getUser, token);

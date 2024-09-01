@@ -17,7 +17,6 @@ export class UserService {
     }
 
     async create(createUserDto: CreateUserDto): Promise<User> {
-        console.log("create at user servicve", createUserDto);
         const { username, email, password } = createUserDto;
     
         const hashedPassword = await bcrypt.hash(password, 10);

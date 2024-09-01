@@ -15,7 +15,6 @@ export class LoanApplicationController {
   @ApiOperation({ summary: 'Apply for a loan' })
   async applyForLoan(@Body('loanAmount') loanAmount: number, @Req() req): Promise<LoanApplication> {
     const userId = req.user.id;
-    console.log("loan amount", loanAmount);
     return this.loanApplicationService.applyForLoan(userId, loanAmount);
   }
 

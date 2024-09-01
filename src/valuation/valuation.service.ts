@@ -24,8 +24,6 @@ export class ValuationService {
       throw new HttpException('Vehicle not found', HttpStatus.BAD_GATEWAY);
     }
 
-    console.log("vehicle:",vehicle);
-
     // Make API call to get valuation
     const vin = vehicle.vin;
     const url = `https://vin-lookup2.p.rapidapi.com/vehicle-lookup?vin=${vin}`;

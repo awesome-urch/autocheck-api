@@ -51,35 +51,24 @@ export class LoanApplicationService {
       throw new HttpException('Loan application not found', HttpStatus.NOT_FOUND);
     }
 
-    console.log("loanApplication:", loanApplication);
-
     if (status === 'approved') {
         
         const userId = loanApplication.user.id;
-        console.log("loanApplication userid:", userId);
         const user = await this.userRepository.findOne({
             where: { id: userId },
             relations: ['vehicles'],
         });
 
-        console.log("loanApplication user:", user);
-
         const vehicleIds = user.vehicles.map(vehicle => vehicle.id);
-
-        console.log("loanApplication vehicleIds:", vehicleIds);
 
         const valuations = await this.valuationRepository.find({
             where: { vehicle: In(vehicleIds) },
         });
 
-        console.log("loanApplication valuations:", valuations);
-
         const totalEstimatedValue = valuations.reduce(
             (sum, valuation) => sum + Number(valuation.estimatedValue),
             0,
         );
-
-        console.log("loanApplication totalEstimatedValue:", totalEstimatedValue);
 
       if (totalEstimatedValue < loanApplication.loanAmount) {
         throw new HttpException('Loan cannot be approved because the total estimated value of vehicles is less than the loan amount', HttpStatus.BAD_REQUEST);
